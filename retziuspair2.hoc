@@ -1,0 +1,99 @@
+load_file("nrngui.hoc")
+//remember to remove dashes from prev line
+//load_file("gap.hoc")
+
+begintemplate retzius
+
+public soma, axon, nden, cden
+public dendritic, somatic, somden
+
+create soma, axon, nden, cden[2]
+objref dendritic, somatic, somden
+
+access soma
+
+proc init() {
+
+forall {Ra =180
+}
+
+dendritic = new SectionList()
+forsec "nden" dendritic.append()
+forsec "cden" dendritic.append()
+
+somatic = new SectionList()
+soma somatic.append
+
+somden = new SectionList()
+forsec somatic somden.append()
+forsec dendritic somden.append()
+
+topol()
+segments()
+geometry()
+memb()
+
+}
+
+
+proc topol() {local i
+	connect axon (0), soma (0.5)
+	connect cden[0](0), axon(0.2)
+	connect cden[1](0), axon(0.2)
+	connect nden(0), axon(0.2)
+
+}
+
+proc segments() {local i
+	soma.nseg= 1
+	axon.nseg= 5
+	nden.nseg = 5
+	forsec "cden" nseg = 10
+}
+
+proc geometry() {local i
+	soma { L = 80  diam = 80 }
+	axon { L = 100  diam = 20 }
+	nden { L = 100  diam = 1 }
+	forsec "cden" { L=50  diam= 1.5}
+	define_shape()
+}
+	
+
+proc memb() {
+	forall {insert pas
+		cm = 1
+		g_pas = 1/25000
+		e_pas = -60
+}
+soma { 
+insert nadend
+     
+insert ikhhdend
+     
+insert cachdend
+     
+insert gkcadend
+     
+insert leakdend
+      
+insert kadend   
+}
+
+axon { 
+insert nadend
+     
+insert ikhhdend
+     
+insert cachdend
+     
+insert gkcadend
+     
+insert leakdend
+      
+insert kadend   
+}
+}
+
+endtemplate retzius
+//xopen ("retztemp.ses")

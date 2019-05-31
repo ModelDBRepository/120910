@@ -1,0 +1,286 @@
+{load_file("nrngui.hoc")}
+objectvar save_window_, rvp_
+objectvar scene_vector_[4]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{pwman_place(0,0,0)}
+
+//Begin PointProcessGroupManager
+{
+load_file("pointgrp.hoc")
+}
+{
+ocbox_ = new PointProcessGroupManager(0)
+}
+{object_push(ocbox_)}
+{
+ms = new MechanismStandard("IClamp")
+ms.set("del", 10, 0)
+ms.set("dur", 20, 0)
+ms.set("amp", 2, 0)
+mnews("IClamp", ms)
+select(0)
+execute("retzius[0].soma ocbox_.move(0.5)")
+ms = new MechanismStandard("AlphaSynapse")
+ms.set("onset", 10, 0)
+ms.set("tau", 0.5, 0)
+ms.set("gmax", 0.002, 0)
+ms.set("e", 0, 0)
+mnews("AlphaSynapse", ms)
+select(1)
+execute("retzius[0].cden[0] ocbox_.move(0.35)")
+ms = new MechanismStandard("AlphaSynapse")
+ms.set("onset", 10, 0)
+ms.set("tau", 0.5, 0)
+ms.set("gmax", 0.006, 0)
+ms.set("e", 0, 0)
+mnews("AlphaSynapse", ms)
+select(2)
+execute("retzius[1].cden[1] ocbox_.move(0.35)")
+ms = new MechanismStandard("IClamp")
+ms.set("del", 10, 0)
+ms.set("dur", 0.5, 0)
+ms.set("amp", 0, 0)
+mnews("IClamp", ms)
+select(3)
+execute("retzius[1].soma ocbox_.move(0.5)")
+}
+{object_pop() doNotify()}
+{
+ocbox_ = ocbox_.v1
+ocbox_.map("PointProcessGroupManager", 7, 687, 812.16, 371.52)
+}
+objref ocbox_
+//End PointProcessGroupManager
+
+{
+xpanel("RunControl", 0)
+v_init = -50
+xvalue("Init","v_init", 1,"stdinit()", 1, 1 )
+xbutton("Init & Run","run()")
+xbutton("Stop","stoprun=1")
+runStopAt = 5
+xvalue("Continue til","runStopAt", 1,"{continuerun(runStopAt) stoprun=1}", 1, 1 )
+runStopIn = 1
+xvalue("Continue for","runStopIn", 1,"{continuerun(t + runStopIn) stoprun=1}", 1, 1 )
+xbutton("Single Step","steprun()")
+t = 60
+xvalue("t","t", 2 )
+tstop = 60
+xvalue("Tstop","tstop", 1,"tstop_changed()", 0, 1 )
+dt = 0.025
+xvalue("dt","dt", 1,"setdt()", 0, 1 )
+steps_per_ms = 40
+xvalue("Points plotted/ms","steps_per_ms", 1,"setdt()", 0, 1 )
+screen_update_invl = 0.05
+xvalue("Scrn update invl","screen_update_invl", 1,"", 0, 1 )
+realtime = 0.36
+xvalue("Real Time","realtime", 0,"", 0, 1 )
+xpanel(0,120)
+}
+{
+save_window_ = new Graph(0)
+save_window_.size(0,60,-60,31)
+scene_vector_[3] = save_window_
+{save_window_.view(0, -60, 60, 91, 774, 0, 387.36, 385.86)}
+graphList[0].append(save_window_)
+save_window_.save_name("graphList[0].")
+save_window_.addvar("retzius[0].soma.v( 0.5 )", 2, 4, 0.765574, 0.981684, 2)
+save_window_.addvar("retzius[1].soma.v( 0.5 )", 1, 4, 0.772131, 1.03396, 2)
+}
+{
+xpanel("forall Ra=global_ra", 0)
+global_ra = 180
+xvalue("global Ra","global_ra", 1,"set_ra()", 1, 1 )
+xpanel(384,117)
+}
+{
+xpanel("Temperature", 0)
+celsius = 20
+xvalue("celsius","celsius", 1,"", 0, 1 )
+xpanel(2120,860)
+}
+{
+xpanel("retzius[0].soma(0 - 1) (Parameters)", 0)
+xlabel("retzius[0].soma(0 - 1) (Parameters)")
+xlabel("nseg = 1")
+rz[0].soma.L = 80
+xvalue("L","rz[0].soma.L", 1,"define_shape()", 0, 0 )
+retzius[0].soma.Ra = 180
+xvalue("Ra","retzius[0].soma.Ra", 1,"rz[0].soma.Ra += 0", 0, 1 )
+rz[0].soma.diam = 80
+xvalue("diam","rz[0].soma.diam", 1,"", 0, 0 )
+rz[0].soma.cm = 1
+xvalue("cm","rz[0].soma.cm", 1,"", 0, 0 )
+rz[0].soma.g_pas = 4e-05
+xvalue("g_pas","rz[0].soma.g_pas", 1,"", 0, 0 )
+rz[0].soma.e_pas = -60
+xvalue("e_pas","rz[0].soma.e_pas", 1,"", 0, 0 )
+rz[0].soma.gnabar_nadend = 0.08
+xvalue("gnabar_nadend","rz[0].soma.gnabar_nadend", 1,"", 0, 0 )
+rz[0].soma.ena = 50
+xvalue("ena","rz[0].soma.ena", 1,"", 0, 0 )
+rz[0].soma.gkbar_ikhhdend = 0.001
+xvalue("gkbar_ikhhdend","rz[0].soma.gkbar_ikhhdend", 1,"", 0, 0 )
+rz[0].soma.gcabar_cachdend = 0.0004
+xvalue("gcabar_cachdend","rz[0].soma.gcabar_cachdend", 1,"", 0, 0 )
+rz[0].soma.gkcabar_gkcadend = 0.013
+xvalue("gkcabar_gkcadend","rz[0].soma.gkcabar_gkcadend", 1,"", 0, 0 )
+rz[0].soma.ikca_gkcadend = 0.00554287
+xvalue("ikca_gkcadend","rz[0].soma.ikca_gkcadend", 1,"", 0, 0 )
+rz[0].soma.cai = 5e-05
+xvalue("cai","rz[0].soma.cai", 1,"", 0, 0 )
+rz[0].soma.cao = 1.8
+xvalue("cao","rz[0].soma.cao", 1,"", 0, 0 )
+rz[0].soma.gl_leakdend = 0.000125
+xvalue("gl_leakdend","rz[0].soma.gl_leakdend", 1,"", 0, 0 )
+rz[0].soma.el_leakdend = -30
+xvalue("el_leakdend","rz[0].soma.el_leakdend", 1,"", 0, 0 )
+rz[0].soma.gkabar_kadend = 0.01
+xvalue("gkabar_kadend","rz[0].soma.gkabar_kadend", 1,"", 0, 0 )
+rz[0].soma.ek = -79
+xvalue("ek","rz[0].soma.ek", 1,"", 0, 0 )
+xpanel(1747,6)
+}
+{
+xpanel("retzius[0].axon(0 - 1) (Parameters)", 0)
+xlabel("retzius[0].axon(0 - 1) (Parameters)")
+xlabel("nseg = 5")
+rz[0].axon.L = 100
+xvalue("L","rz[0].axon.L", 1,"define_shape()", 0, 0 )
+retzius[0].axon.Ra = 180
+xvalue("Ra","retzius[0].axon.Ra", 1,"rz[0].axon.Ra += 0", 0, 1 )
+rz[0].axon.cm = 1
+xvalue("cm","rz[0].axon.cm", 1,"", 0, 0 )
+rz[0].axon.diam = 20
+xvalue("diam","rz[0].axon.diam", 1,"", 0, 0 )
+rz[0].axon.g_pas = 4e-05
+xvalue("g_pas","rz[0].axon.g_pas", 1,"", 0, 0 )
+rz[0].axon.e_pas = -60
+xvalue("e_pas","rz[0].axon.e_pas", 1,"", 0, 0 )
+rz[0].axon.gnabar_nadend = 0.125
+xvalue("gnabar_nadend","rz[0].axon.gnabar_nadend", 1,"", 0, 0 )
+rz[0].axon.ena = 50
+xvalue("ena","rz[0].axon.ena", 1,"", 0, 0 )
+rz[0].axon.gkbar_ikhhdend = 0.001
+xvalue("gkbar_ikhhdend","rz[0].axon.gkbar_ikhhdend", 1,"", 0, 0 )
+rz[0].axon.gcabar_cachdend = 0.0004
+xvalue("gcabar_cachdend","rz[0].axon.gcabar_cachdend", 1,"", 0, 0 )
+rz[0].axon.gkcabar_gkcadend = 0.013
+xvalue("gkcabar_gkcadend","rz[0].axon.gkcabar_gkcadend", 1,"", 0, 0 )
+xlabel("ikca_gkcadend is not constant")
+rz[0].axon.cai = 5e-05
+xvalue("cai","rz[0].axon.cai", 1,"", 0, 0 )
+rz[0].axon.cao = 1.8
+xvalue("cao","rz[0].axon.cao", 1,"", 0, 0 )
+rz[0].axon.gl_leakdend = 0.000125
+xvalue("gl_leakdend","rz[0].axon.gl_leakdend", 1,"", 0, 0 )
+rz[0].axon.el_leakdend = -30
+xvalue("el_leakdend","rz[0].axon.el_leakdend", 1,"", 0, 0 )
+rz[0].axon.gkabar_kadend = 0.01
+xvalue("gkabar_kadend","rz[0].axon.gkabar_kadend", 1,"", 0, 0 )
+rz[0].axon.ek = -77
+xvalue("ek","rz[0].axon.ek", 1,"", 0, 0 )
+xpanel(2254,7)
+}
+{
+xpanel("k_ion (Globals)", 0)
+ki0_k_ion = 125
+xvalue("ki0_k_ion","ki0_k_ion", 1,"", 0, 0 )
+ko0_k_ion = 4
+xvalue("ko0_k_ion","ko0_k_ion", 1,"", 0, 0 )
+xpanel(1744,1028)
+}
+{
+xpanel("na_ion (Globals)", 0)
+nai0_na_ion = 10
+xvalue("nai0_na_ion","nai0_na_ion", 1,"", 0, 0 )
+nao0_na_ion = 120
+xvalue("nao0_na_ion","nao0_na_ion", 1,"", 0, 0 )
+xpanel(1744,859)
+}
+{
+xpanel("retzius[1].soma(0 - 1) (Parameters)", 0)
+xlabel("retzius[1].soma(0 - 1) (Parameters)")
+xlabel("nseg = 1")
+rz[1].soma.L = 80
+xvalue("L","rz[1].soma.L", 1,"define_shape()", 0, 0 )
+retzius[1].soma.Ra = 180
+xvalue("Ra","retzius[1].soma.Ra", 1,"rz[1].soma.Ra += 0", 0, 1 )
+rz[1].soma.diam = 80
+xvalue("diam","rz[1].soma.diam", 1,"", 0, 0 )
+rz[1].soma.cm = 1
+xvalue("cm","rz[1].soma.cm", 1,"", 0, 0 )
+rz[1].soma.g_pas = 4e-05
+xvalue("g_pas","rz[1].soma.g_pas", 1,"", 0, 0 )
+rz[1].soma.e_pas = -60
+xvalue("e_pas","rz[1].soma.e_pas", 1,"", 0, 0 )
+rz[1].soma.gnabar_nadend = 0.08
+xvalue("gnabar_nadend","rz[1].soma.gnabar_nadend", 1,"", 0, 0 )
+rz[1].soma.ena = 50
+xvalue("ena","rz[1].soma.ena", 1,"", 0, 0 )
+rz[1].soma.gkbar_ikhhdend = 0.001
+xvalue("gkbar_ikhhdend","rz[1].soma.gkbar_ikhhdend", 1,"", 0, 0 )
+rz[1].soma.gcabar_cachdend = 0.0004
+xvalue("gcabar_cachdend","rz[1].soma.gcabar_cachdend", 1,"", 0, 0 )
+rz[1].soma.gkcabar_gkcadend = 0.013
+xvalue("gkcabar_gkcadend","rz[1].soma.gkcabar_gkcadend", 1,"", 0, 0 )
+rz[1].soma.ikca_gkcadend = 0.00554234
+xvalue("ikca_gkcadend","rz[1].soma.ikca_gkcadend", 1,"", 0, 0 )
+rz[1].soma.cai = 5e-05
+xvalue("cai","rz[1].soma.cai", 1,"", 0, 0 )
+rz[1].soma.cao = 1.8
+xvalue("cao","rz[1].soma.cao", 1,"", 0, 0 )
+rz[1].soma.gl_leakdend = 0.000125
+xvalue("gl_leakdend","rz[1].soma.gl_leakdend", 1,"", 0, 0 )
+rz[1].soma.el_leakdend = -30
+xvalue("el_leakdend","rz[1].soma.el_leakdend", 1,"", 0, 0 )
+rz[1].soma.gkabar_kadend = 0.01
+xvalue("gkabar_kadend","rz[1].soma.gkabar_kadend", 1,"", 0, 0 )
+rz[1].soma.ek = -79
+xvalue("ek","rz[1].soma.ek", 1,"", 0, 0 )
+xpanel(1729,471)
+}
+{
+xpanel("retzius[1].axon(0 - 1) (Parameters)", 0)
+xlabel("retzius[1].axon(0 - 1) (Parameters)")
+xlabel("nseg = 5")
+rz[1].axon.L = 100
+xvalue("L","rz[1].axon.L", 1,"define_shape()", 0, 0 )
+retzius[1].axon.Ra = 180
+xvalue("Ra","retzius[1].axon.Ra", 1,"rz[1].axon.Ra += 0", 0, 1 )
+rz[1].axon.cm = 1
+xvalue("cm","rz[1].axon.cm", 1,"", 0, 0 )
+rz[1].axon.diam = 20
+xvalue("diam","rz[1].axon.diam", 1,"", 0, 0 )
+rz[1].axon.g_pas = 4e-05
+xvalue("g_pas","rz[1].axon.g_pas", 1,"", 0, 0 )
+rz[1].axon.e_pas = -60
+xvalue("e_pas","rz[1].axon.e_pas", 1,"", 0, 0 )
+rz[1].axon.gnabar_nadend = 0.125
+xvalue("gnabar_nadend","rz[1].axon.gnabar_nadend", 1,"", 0, 0 )
+rz[1].axon.ena = 50
+xvalue("ena","rz[1].axon.ena", 1,"", 0, 0 )
+rz[1].axon.gkbar_ikhhdend = 0.001
+xvalue("gkbar_ikhhdend","rz[1].axon.gkbar_ikhhdend", 1,"", 0, 0 )
+rz[1].axon.gcabar_cachdend = 0.0004
+xvalue("gcabar_cachdend","rz[1].axon.gcabar_cachdend", 1,"", 0, 0 )
+rz[1].axon.gkcabar_gkcadend = 0.013
+xvalue("gkcabar_gkcadend","rz[1].axon.gkcabar_gkcadend", 1,"", 0, 0 )
+xlabel("ikca_gkcadend is not constant")
+rz[1].axon.cai = 5e-05
+xvalue("cai","rz[1].axon.cai", 1,"", 0, 0 )
+rz[1].axon.cao = 1.8
+xvalue("cao","rz[1].axon.cao", 1,"", 0, 0 )
+rz[1].axon.gl_leakdend = 0.000125
+xvalue("gl_leakdend","rz[1].axon.gl_leakdend", 1,"", 0, 0 )
+rz[1].axon.el_leakdend = -30
+xvalue("el_leakdend","rz[1].axon.el_leakdend", 1,"", 0, 0 )
+rz[1].axon.gkabar_kadend = 0.01
+xvalue("gkabar_kadend","rz[1].axon.gkabar_kadend", 1,"", 0, 0 )
+rz[1].axon.ek = -77
+xvalue("ek","rz[1].axon.ek", 1,"", 0, 0 )
+xpanel(2254,475)
+}
+objectvar scene_vector_[1]
+{doNotify()}

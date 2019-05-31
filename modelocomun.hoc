@@ -1,0 +1,59 @@
+load_file("nrngui.hoc")
+load_file("retziuspair2.hoc")
+//load_file("retziusRaVar.hoc")
+load_file("gap.hoc")
+
+
+//cvode_active(1)
+//activar solo para dt variables
+
+dt = 0.025
+celsius=25
+tstop=200
+
+ncdend=2
+ngap=2
+
+objref gap[ngap]
+objref g, b, nil, stim[ncdend], stim2 [ncdend]
+objref rz[2], outfile, correl 
+objref retzius1, retzius2, tretzius1, tretzius2
+
+retzius1 = new Vector()
+tretzius1 = new Vector()
+retzius2 = new Vector()
+tretzius2 = new Vector()
+
+for i=0,  1 {
+
+rz[i] = new retzius()
+}
+
+rz[0].soma {
+cvode.record(&v(.5), retzius1, tretzius1)
+}
+
+rz[1].soma {
+cvode.record(&v(.5), retzius2, tretzius2)
+}
+
+
+ggap= .4
+
+//ggap conductancia en nanosiemens
+
+rel=0.95
+
+gap[0] = new Gap()
+rz[0].cden [0] gap[0].src(rel)
+rz[1].cden [0] gap[0].target(rel)
+gap[0].g(ggap)
+
+gap[1] = new Gap()
+rz[0].cden [1] gap[1].src(rel)
+rz[1].cden [1] gap[1].target(rel)
+gap[0].g(ggap)
+gap[1].g(ggap)
+
+
+xopen ("retztemp.ses")
